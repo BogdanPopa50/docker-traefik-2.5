@@ -1,0 +1,202 @@
+################################################################
+#
+# Configuration sample for Traefik v2.
+#
+# For Traefik v1: https://github.com/traefik/traefik/blob/v1.7/traefik.sample.toml
+#
+################################################################
+
+################################################################
+# Global configuration
+################################################################
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+################################################################
+# EntryPoints configuration
+################################################################
+
+# EntryPoints definition
+#
+# Optional
+#
+entryPoints:
+  web:
+    address: :80
+
+  websecure:
+    address: :443
+
+
+################################################################
+# Certificate Let's Encrypt
+################################################################
+
+certificatesResolvers:
+  le:
+    acme:
+      email: E-MAIL@E-MAIL.com
+      storage: /etc/traefik/acme/acme.json
+      tlsChallenge: true
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+#        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+#        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+#        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+#        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_AES_256_GCM_SHA384
+        - TLS_CHACHA20_POLY1305_SHA256         
+      curvePreferences:
+        - secp521r1
+        - secp384r1
+      sniStrict: true
+
+# What label we need:
+
+## Dynamic configuration
+#labels:
+#  - traefik.http.routers.blog.rule=Host(`example.com`) && Path(`/blog`)
+#  - traefik.http.routers.blog.tls=true
+#  - traefik.http.routers.blog.tls.certresolver=myresolver
+
+# traefik.http.routers.<router_name>.rule
+
+################################################################
+# Traefik logs configuration
+################################################################
+
+# Traefik logs
+# Enabled by default and log to stdout
+#
+# Optional
+#
+#log:
+  # Log level
+  #
+  # Optional
+  # Default: "ERROR"
+  #
+#  level: DEBUG
+log:
+  level: DEBUG
+  filepath: /var/log/traefik.log
+
+
+  # Sets the filepath for the traefik log. If not specified, stdout will be used.
+  # Intermediate directories are created if necessary.
+  #
+  # Optional
+  # Default: os.Stdout
+  #
+#  filePath: log/traefik.log
+
+  # Format is either "json" or "common".
+  #
+  # Optional
+  # Default: "common"
+  #
+#  format: json
+
+################################################################
+# Access logs configuration
+################################################################
+
+# Enable access logs
+# By default it will write to stdout and produce logs in the textual
+# Common Log Format (CLF), extended with additional fields.
+#
+# Optional
+#
+accessLog:
+  # Sets the file path for the access log. If not specified, stdout will be used.
+  # Intermediate directories are created if necessary.
+  #
+  # Optional
+  # Default: os.Stdout
+  #
+  filePath: /var/log/traefik.log
+
+  # Format is either "json" or "common".
+  #
+  # Optional
+  # Default: "common"
+  #
+#  format: json
+
+################################################################
+# API and dashboard configuration
+################################################################
+
+# Enable API and dashboard
+#
+# Optional
+#
+api:
+  # Enable the API in insecure mode
+  #
+  # Optional
+  # Default: false
+  #
+  insecure: true
+
+  # Enabled Dashboard
+  #
+  # Optional
+  # Default: true
+  #
+  dashboard: true
+
+  debug: true
+################################################################
+# Ping configuration
+################################################################
+
+# Enable ping
+#ping:
+  # Name of the related entry point
+  #
+  # Optional
+  # Default: "traefik"
+  #
+#  entryPoint: traefik
+
+################################################################
+# Docker configuration backend
+################################################################
+
+providers:
+  # Enable Docker configuration backend
+  docker:
+    # Docker server endpoint. Can be a tcp or a unix socket endpoint.
+    #
+    # Required
+    # Default: "unix:///var/run/docker.sock"
+    #
+    endpoint: "unix:///var/run/docker.sock"
+
+    # Default host rule.
+    #
+    # Optional
+    # Default: "Host(`{{ normalize .Name }}`)"
+    #
+#    defaultRule: Host(`{{ normalize .Name }}.docker.localhost`)
+
+    # Expose containers by default in traefik
+    #
+    # Optional
+    # Default: true
+    #
+    exposedByDefault: false
+  
+  file:
+    filename: "/etc/traefik/routes.yml"
+    watch: true

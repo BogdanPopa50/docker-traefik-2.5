@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    container_name: "traefik"
+    hostname: "traefik" 
+    # The official v2.5 Traefik docker image
+    image: traefik:v2.5
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by configrations from traefik.yml)
+      - "8080:8080"
+    volumes:
+      # For Traefik to listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Trefik configuration
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      # acme.json is used to store certificates
+      - ./acme.json:/etc/traefik/acme/acme.json
+      # optional - for having the log file outside container
+      - ./log:/var/log/
+      # routes.yml - is used to store some static configurations for LAN hosts
+      - ./routes.yml:/etc/traefik/routes.yml
+
+networks:
+  default:
+    external:
+      name: traefik_network
+
