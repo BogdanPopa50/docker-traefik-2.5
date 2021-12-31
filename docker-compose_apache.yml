@@ -1,0 +1,24 @@
+
+version: '3.1'
+
+services:
+  php:
+    image: php:7.4-apache
+    ports:
+      - 81:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.site1.entrypoints=websecure"
+      - "traefik.http.routers.site1.rule=Host(`site1.example.com`)"
+      - "traefik.http.routers.site1.tls.certresolver=le"
+
+      - "traefik.http.routers.site1_.entrypoints=web"
+      - "traefik.http.routers.site1_.rule=Host(`site1.example.com`)"
+
+    volumes:
+      - ./:/var/www/html/
+
+networks:
+  default:
+    external:
+      name: traefik_network
