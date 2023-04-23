@@ -24,6 +24,14 @@ global:
 entryPoints:
   web:
     address: :80
+    # this lines should be uncommented if you want redirect to https
+    #http:
+    #  redirections:
+    #    entrypoint:
+    #      to: websecure
+    #      scheme: https
+
+    
 
   websecure:
     address: :443
